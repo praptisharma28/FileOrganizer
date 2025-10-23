@@ -1,38 +1,65 @@
 //code to organize files into images, gifs and videos etc. using idiomatic rust
 
-use std::{fs, io,path::Path};
+use clap::Parser;
+use std::{
+    fs, io,
+    path::{Path, PathBuf},
+};
 
-
-fn main()-> io::Result<()>{ //to read from files, its almost same as result
-    let folder_path="./Downloads";
-    organize_files(folder_path)
-
+#[derive(Parser, Debug)]
+#[command(version = "0.1.0", about = "file_organizer", long_about = None)]
+struct Args {
+    #[arg(short, long, help = "Sets the file path to use")]
+    path: PathBuf,
 }
 
-fn organize_files(folder_path:&str)-> io::Result<()>{
-    let all_files=fs::read_dir(folder_path)?; // read all files in the directory
-    for files in all_files{
-        let file= files?;
-        let path=file.path();
-        if path.is_file(){ //checking if a path is a file
-            let extension = path.extension().and_then(|ext| ext.to_str()).unwrap_or("").to_lowercase();
-            let target_folder = match extension.as_str(){
-                "jpg" |"jpeg" | "png"| "bmp" | "tiff" => "images",
-                "gif" => "gifs",
-                "mp4"| "mov" | "avi"| "mkv" => "videos",
-                "mp3" | "wav"| "flac" => "audio",
-                "pdf" | "docx"| "txt" => "documents",
-                "zip"| "rar" | "7z" => "archives",
-                _ => "others",
-            };
-            let pathfornewfolder = Path::new(folder_path).join(target_folder);
-            if !pathfornewfolder.exists(){
-                fs::create_dir(&pathfornewfolder)?; // create new directory if not exists
-            }
-            let file_name = path.file_name().unwrap(); //get the file name
-            let new_location =pathfornewfolder.join(file_name); //new location for the file
-            fs::rename(&path, &new_location).unwrap(); //move the file to new location
+fn main() -> io::Result<()> {
+    let args = Args::parse();
 
+    organize_files(&args.path)?;
+
+    Ok(())
+}
+
+fn categorize_file(ext: &str) -> &str {
+    match ext {
+        "jpg" | "jpeg" | "png" | "bmp" | "tiff" => "images",
+        "gif" => "gifs",
+        "mp4" | "mov" | "avi" | "mkv" => "videos",
+        "mp3" | "wav" | "flac" => "audio",
+        "pdf" | "docx" | "txt" => "documents",
+        "zip" | "rar" | "7z" => "archives",
+        _ => "others",
+    }
+}
+
+fn organize_files(folder_path: &Path) -> io::Result<()> {
+    for files in fs::read_dir(folder_path)? {
+        let file = files?;
+
+        let path = file.path();
+
+        //checking if a path is a file
+        if path.is_file() {
+            let extension = path
+                .extension()
+                .and_then(|e| e.to_str())
+                .unwrap_or("")
+                .to_lowercase();
+
+            let target_folder = categorize_file(&extension);
+
+            let new_folder_path = folder_path.join(target_folder);
+
+            // create new directory if not exists
+            if !new_folder_path.exists() {
+                fs::create_dir(&new_folder_path)?;
+            }
+
+            if let Some(file_name) = path.file_name() {
+                let new_location = new_folder_path.join(file_name);
+                fs::rename(path, new_location)?; //move the file to new location
+            }
         }
     }
     Ok(())
