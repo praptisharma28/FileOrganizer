@@ -1,11 +1,24 @@
 //code to organize files into images, gifs and videos etc. using idiomatic rust
 
-use std::{fs, io,path::Path};
+use std::{env, fs, io, path::Path};
 
 
 fn main()-> io::Result<()>{ //to read from files, its almost same as result
-    let folder_path="./Downloads";
-    organize_files(folder_path)
+
+   let args : Vec<String> = env::args().collect(); // get cli arguments
+   //check if user has provided a path
+   let folder_path= if args.len() > 1{
+    &args[1]
+   }else{
+  "./Downloads"
+   };
+    println!("Organizing files in: {}", folder_path);
+    
+    match organize_files(folder_path) {
+        Ok(()) => println!("Files organized successfully!"),
+        Err(e) => println!("Error organizing files: {}", e),
+    }
+    Ok(())
 
 }
 
@@ -32,7 +45,7 @@ fn organize_files(folder_path:&str)-> io::Result<()>{
             let file_name = path.file_name().unwrap(); //get the file name
             let new_location =pathfornewfolder.join(file_name); //new location for the file
             fs::rename(&path, &new_location).unwrap(); //move the file to new location
-
+        
         }
     }
     Ok(())
