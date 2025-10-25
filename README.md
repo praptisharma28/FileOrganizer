@@ -4,6 +4,11 @@
 
 ## Working demo
 
+<img width="1289" height="414" alt="Screenshot 2025-10-25 at 5 45 58 PM" src="https://github.com/user-attachments/assets/c0dd5ad2-56cf-49c3-b170-07a263f853c4" />
+
+## After it works file structure looks like this 
+
+<img width="418" height="183" alt="Screenshot 2025-10-25 at 6 00 04 PM" src="https://github.com/user-attachments/assets/3fbd271e-9821-4aea-ae83-349d0678bb32" />
 
 ---
 
