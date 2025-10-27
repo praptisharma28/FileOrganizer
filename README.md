@@ -70,10 +70,10 @@ You can run the program with different flags. Below is a table of common test co
 ## Installation
 
 1. Ensure you have [Rust](https://www.rust-lang.org/tools/install) installed.
-2. Clone this repository: https://github.com/subhdotsol/FileOrganizer.git
+2. Clone this repository: https://github.com/praptisharma28/FileOrganizer.git
 
 ```bash
-git clone https://github.com/yourusername/FileOrganizer.git
+git clone https://github.com/praptisharma28/FileOrganizer.git
 cd FileOrganizer
 cargo build 
 
